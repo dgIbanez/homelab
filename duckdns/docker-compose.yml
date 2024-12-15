@@ -1,0 +1,20 @@
+---
+services:
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:version-cd710f3e
+    container_name: duckdns
+    environment:
+      - PUID=1500
+      - PGID=1500
+      - TZ=America/Montevideo
+      - SUBDOMAINS=arata51966
+      - TOKEN=f0a4d25c-c66e-482f-a503-161d6285ff9c
+      - UPDATE_IP=ipv4
+      - LOG_FILE=true
+    volumes:
+      - duckdns:/config
+    restart: unless-stopped
+
+volumes:
+  duckdns:
+    name: duckdns
