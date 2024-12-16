@@ -1,0 +1,19 @@
+services:
+  step-ca:
+    image: smallstep/step-ca
+    container_name: step-ca
+    ports:
+      - "9000:9000"  # Exponer el puerto de ACME
+    environment:
+      - DOCKER_STEPCA_INIT_NAME=Smallstep
+      - DOCKER_STEPCA_INIT_DNS_NAMES=localhost,duckdns.docker.local
+      - DOCKER_STEPCA_INIT_REMOTE_MANAGEMENT=true
+      - DOCKER_STEPCA_INIT_ACME=true
+    volumes:
+      - step:/home/step  # Volumen para persistir los datos
+    restart: always
+
+volumes:
+  step:
+    name: step-ca
+
