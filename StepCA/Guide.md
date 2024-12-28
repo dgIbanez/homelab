@@ -99,4 +99,20 @@ curl https://localhost:9000/health
 {"status":"ok"}
 ```
 
+## 6. Copy the Root Certificate to Other Hosts
+
+To ensure other systems trust the CA, copy the root certificate from the step-ca container to your target LXC instances. For example:
+
+```bash
+docker cp <container-id>:/home/step/certs/root_ca.crt .
+scp ./root_ca.crt user@<LXC_ip>:/tmp/
+```
+On the target host (e.g., Debian 12 LXC), move the certificate to the trusted CA directory:
+```bash
+mv /tmp/root_ca.crt /usr/local/share/ca-certificates/
+update-ca-certificates
+```
+This loads the root CA into the trusted certificate pool located at /etc/ssl/certs/root_ca.pem. The system is now ready to trust certificates issued by your step-ca.
+
+
 
