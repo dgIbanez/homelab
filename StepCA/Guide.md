@@ -13,7 +13,7 @@ docker pull smallstep/step-ca
 The Docker volume `step` will hold your CA configuration, keys, and database.
 
 ```bash
-docker run -it -v step:/home/step smallstep/step-ca step ca init --remote-management
+docker run -it -v step:/home/step smallstep/step-ca step ca init --remote-management --acme
 ```
 
 The `init` command will guide you through the bootstrapping process. Example output:
@@ -99,4 +99,33 @@ curl https://localhost:9000/health
 {"status":"ok"}
 ```
 
+## 6. Copy the Root Certificate to Other Hosts
+
+To ensure other systems trust the CA, copy the root certificate from the step-ca container to your target LXC instances. For example:
+
+```bash
+docker cp <container-id>:/home/step/certs/root_ca.crt .
+scp ./root_ca.crt user@<LXC_ip>:/tmp/
+```
+On the target host (e.g., Debian 12 LXC), move the certificate to the trusted CA directory:
+```bash
+mv /tmp/root_ca.crt /usr/local/share/ca-certificates/
+update-ca-certificates
+```
+This loads the root CA into the trusted certificate pool located at /etc/ssl/certs/root_ca.pem. The system is now ready to trust certificates issued by your step-ca.
+
+## 7. Solicitar certificado
+```bash
+certbot certonly --standalone -d <lxc>.homelab.local --server https://step-ca.homelab.local:9000/acme/acme/directory --agree-tos --email <tu mail aqui> -v
+```
+
+## 8. Configurar renovación
+
+Para configurar la renovación automática de los certificados, asegúrate de que el servidor de la CA esté especificado correctamente en el archivo de configuración `cli.ini` de Certbot. Para ello, agrega la siguiente línea al archivo:
+
+```ini
+server = https://step-ca.homelab.local:9000/acme/acme/directory
+```
+
+Esto asegura que Certbot utilice el servidor ACME de tu `step-ca` para las renovaciones.
 
