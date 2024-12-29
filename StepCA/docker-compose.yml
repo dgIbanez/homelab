@@ -1,0 +1,15 @@
+---
+services:
+  step-ca:
+    image: smallstep/step-ca
+    container_name: step-ca
+    ports:
+      - 9000:9000
+    volumes:
+      - step-ca:/home/step
+    restart: unless-stopped
+
+volumes:
+  step-ca:
+    name: step
+    external: true
