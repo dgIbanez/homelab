@@ -9,6 +9,14 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
+      - /etc/letsencrypt/live/portainer.homelab.local:/certs/live/portainer.homelab.local:ro
+      - /etc/letsencrypt/archive/portainer.homelab.local:/certs/archive/portainer.homelab.local:ro
+
+    command:
+      - "--sslcert"
+      - "/certs/live/portainer.homelab.local/fullchain.pem"
+      - "--sslkey"
+      - "/certs/live/portainer.homelab.local/privkey.pem"
 
 volumes:
   portainer_data:
