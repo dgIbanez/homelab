@@ -66,23 +66,6 @@ The CA runs an HTTPS API on port 9000 inside the container. Expose the server ad
 docker run -d -p 9000:9000 -v step:/home/step smallstep/step-ca
 ```
 
-Now, in the host environment, bootstrap your step client configuration:
-
-```bash
-CA_FINGERPRINT=$(docker run -v step:/home/step smallstep/step-ca step certificate fingerprint /home/step/certs/root_ca.crt)
-step ca bootstrap --ca-url https://localhost:9000 --fingerprint $CA_FINGERPRINT --install
-```
-
-**Output:**
-
-```plaintext
-The root certificate has been saved in /Users/alice/.step/certs/root_ca.crt.
-Your configuration has been saved in /Users/alice/.step/config/defaults.json.
-Installing the root certificate in the system truststore...
-[sudo] password for alice: ...
-done.
-```
-
 Your local step CLI is now configured to use the container instance of `step-ca` and the new root certificate is trusted by the host environment.
 
 ## 5. Run a health check
