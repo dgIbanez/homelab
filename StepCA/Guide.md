@@ -65,6 +65,7 @@ The CA runs an HTTPS API on port 9000 inside the container. Expose the server ad
 ```bash
 docker run -d -p 9000:9000 -v step:/home/step smallstep/step-ca
 ```
+O PUEDES USAR EL DOCKER COMPOSE QUE ASI TIENES INFRAESTRUCUTRA COMO CÓDIGO ;)
 
 Your local step CLI is now configured to use the container instance of `step-ca` and the new root certificate is trusted by the host environment.
 
