@@ -1,0 +1,58 @@
+version: "3"
+
+services:
+  wireguard:
+    image: linuxserver/wireguard:latest
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - wg-config:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Montevideo
+      - SERVERURL=arata5196966.duckdns.org
+      - SERVERPORT=51820 #optional
+      - PEERS=0
+      - PEERDNS=auto #optional
+        #- INTERNAL_SUBNET=10.13.13.0 #optional
+      - ALLOWEDIPS=0.0.0.0/0 #optional
+      - PERSISTENTKEEPALIVE_PEERS= 15
+      - LOG_CONFS=true #optional
+    ports:
+      - "5000:5000"
+      - "51820:51820/udp"
+
+  wireguard-ui:
+    image: ngoduykhanh/wireguard-ui:latest
+    container_name: wireguard-ui
+    depends_on:
+      - wireguard
+    cap_add:
+      - NET_ADMIN
+    network_mode: service:wireguard
+    environment:
+      - SESSION_SECRET
+      - WGUI_USERNAME=admin
+      - WGUI_PASSWORD=admin
+      - WG_CONF_TEMPLATE
+      - WGUI_MANAGE_START=true
+      - WGUI_MANAGE_RESTART=true
+      - WGUI_ENDPOINT_ADDRESS=arata51966.duckdns.org
+      - WGUI_DNS=192.168.1.100
+        # - WGUI_SERVER_INTERFACE_ADDRESSES= 10.13.13.0
+    logging:
+      driver: json-file
+      options:
+        max-size: 50m
+    volumes:
+      - wg-database:/app/db
+      - wg-config:/etc/wireguard
+
+
+volumes:
+  wg-config:
+    name: wg-config
+  wg-database:
+    name: wg-database
